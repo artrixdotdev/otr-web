@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import {
   AdminNotesWrapper,
   GameScoresWrapper,
@@ -12,7 +11,9 @@ import {
   TournamentsWrapper,
   ProblemDetails,
   HttpValidationProblemDetails,
+  AuthWrapper,
 } from '@osu-tournament-rating/otr-api-client';
+import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
 
 const configuration: IOtrApiWrapperConfiguration = {
@@ -25,8 +26,12 @@ const configuration: IOtrApiWrapperConfiguration = {
           return config;
         }
 
-        const session = await auth();
-        config.headers.setAuthorization(`Bearer ${session?.accessToken}`);
+        const cookieStore = await cookies();
+        const sessionCookie = cookieStore.get('otr-session');
+
+        if (sessionCookie) {
+          config.headers.setAuthorization(`Bearer ${sessionCookie}`);
+        }
 
         return config;
       },
@@ -84,6 +89,7 @@ export function isValidationProblemDetails<T extends object = object>(
 }
 
 export const adminNotes = new AdminNotesWrapper(configuration);
+export const auth = new AuthWrapper(configuration);
 export const games = new GamesWrapper(configuration);
 export const leaderboards = new LeaderboardsWrapper(configuration);
 export const matches = new MatchesWrapper(configuration);
