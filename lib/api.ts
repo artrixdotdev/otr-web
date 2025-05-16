@@ -6,7 +6,6 @@ import {
   LeaderboardsWrapper,
   MatchesWrapper,
   MeWrapper,
-  OAuthWrapper,
   SearchWrapper,
   TournamentsWrapper,
   ProblemDetails,
@@ -15,6 +14,7 @@ import {
 } from '@osu-tournament-rating/otr-api-client';
 import { cookies } from 'next/headers';
 import { notFound } from 'next/navigation';
+import { SESSION_COOKIE } from './utils/auth';
 
 const configuration: IOtrApiWrapperConfiguration = {
   baseUrl: process.env.OTR_API_ROOT as string,
@@ -27,7 +27,7 @@ const configuration: IOtrApiWrapperConfiguration = {
         }
 
         const cookieStore = await cookies();
-        const sessionCookie = cookieStore.get('otr-session');
+        const sessionCookie = cookieStore.get(SESSION_COOKIE);
 
         if (sessionCookie) {
           config.headers.setAuthorization(`Bearer ${sessionCookie}`);
@@ -94,7 +94,6 @@ export const games = new GamesWrapper(configuration);
 export const leaderboards = new LeaderboardsWrapper(configuration);
 export const matches = new MatchesWrapper(configuration);
 export const me = new MeWrapper(configuration);
-export const oAuth = new OAuthWrapper(configuration);
 export const scores = new GameScoresWrapper(configuration);
 export const search = new SearchWrapper(configuration);
 export const tournaments = new TournamentsWrapper(configuration);
