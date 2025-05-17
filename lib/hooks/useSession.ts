@@ -1,13 +1,13 @@
-import { cookies } from 'next/headers';
-import { useCookies } from 'next-client-cookies';
-import { UserDTO } from '@osu-tournament-rating/otr-api-client';
-import { me } from '../api';
+'use client';
+
+import { useCookiesNext } from 'cookies-next/client';
 import { USER_COOKIE } from '../utils/auth';
+import { UserDTO } from '@osu-tournament-rating/otr-api-client';
 
 /**
  * Type guard to check if an object is a valid UserDTO
  */
-function isUserDTO(obj: unknown): obj is UserDTO {
+export function isUserDTO(obj: unknown): obj is UserDTO {
   return (
     typeof obj === 'object' &&
     obj !== null &&
@@ -20,33 +20,21 @@ function isUserDTO(obj: unknown): obj is UserDTO {
 }
 
 /**
- * Fetches user data and stores it in a session cookie
- * @returns The fetched user
- */
-export async function createSession(): Promise<UserDTO | null> {
-  const cookieStore = await cookies();
-  const { result } = await me.get();
-
-  const userJson = JSON.stringify(result);
-  cookieStore.set(USER_COOKIE, userJson);
-
-  return result;
-}
-
-/**
- * A client-side function which attempts to read user session data from stored cookie
+ * A client-side function which attempts to read user session data from a cookie
  */
 export function useSession(): UserDTO | null {
-  const clientCookies = useCookies();
-  const userCookie = clientCookies.get(USER_COOKIE);
+  const { getCookie, hasCookie } = useCookiesNext();
 
-  if (!userCookie) {
+  if (!hasCookie(USER_COOKIE)) {
     return null;
   }
 
-  // Parse cookie into JSON and ensure it as a UserDTO
+  const userCookie = getCookie(USER_COOKIE);
+  const cookieJson = JSON.stringify(userCookie);
+
+  // Parse cookie into JSON and ensure it's a UserDTO
   try {
-    const parsedUser = JSON.parse(userCookie);
+    const parsedUser = JSON.parse(cookieJson);
 
     if (!isUserDTO(parsedUser)) {
       console.error('Invalid user cookie');

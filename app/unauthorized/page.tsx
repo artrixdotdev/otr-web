@@ -1,11 +1,11 @@
-import { auth } from '@/auth';
 import { redirect, RedirectType } from 'next/navigation';
 import { Roles } from '@osu-tournament-rating/otr-api-client';
+import { getSession } from '@/lib/actions/session';
 
 export default async function Page() {
-  const session = await auth();
+  const session = await getSession();
 
-  if (session?.user?.scopes?.includes(Roles.Whitelist)) {
+  if (session?.scopes?.includes(Roles.Whitelist)) {
     redirect('/', RedirectType.replace);
   }
 

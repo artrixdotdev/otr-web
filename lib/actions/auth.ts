@@ -1,22 +1,14 @@
-'use client';
+'use server';
 
-import { cookies } from 'next/headers';
-import { auth, me } from '../api';
-import { SESSION_COOKIE, USER_COOKIE } from '../utils/auth';
+import { redirect } from 'next/navigation';
+import { auth } from '../api';
+import { clearSession } from '../utils/session';
 
 export async function login() {
-  const redirectUri = process.env.OTR_WEB_ROOT;
-  const { result } = await auth.login({
-    redirectUri,
-  });
-
-  // Fetch user data and store
-  const cookieStore = await cookies();
-  const { result: meResult } = await me.get();
-  const meJson = JSON.stringify(meResult);
-  cookieStore.set(USER_COOKIE, meJson);
-
-  return result;
+  const redirectUri = process.env.OTR_WEB_ROOT + '/auth/login';
+  redirect(
+    `${process.env.OTR_API_ROOT}/api/v1/auth/login?redirectUri=${redirectUri}`
+  );
 }
 
 export async function logout() {
@@ -25,15 +17,6 @@ export async function logout() {
     redirectUri,
   });
 
-  // Delete cookies
-  const cookieStore = await cookies();
-  if (cookieStore.has(SESSION_COOKIE)) {
-    cookieStore.delete(SESSION_COOKIE);
-  }
-
-  if (cookieStore.has(USER_COOKIE)) {
-    cookieStore.delete(USER_COOKIE);
-  }
-
+  await clearSession();
   return result;
 }

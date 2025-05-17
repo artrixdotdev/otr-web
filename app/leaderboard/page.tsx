@@ -14,13 +14,14 @@ import { leaderboardFilterSchema } from '@/lib/schema';
 import { z } from 'zod';
 import LeaderboardFilter from '@/components/leaderboard/LeaderboardFilter';
 import Link from 'next/link';
-import { auth } from '@/auth';
 import { createSearchParamsFromSchema } from '@/lib/utils/leaderboard';
+import { getSession } from '@/lib/actions/session';
 
 async function getData(params: z.infer<typeof leaderboardFilterSchema>) {
-  const session = await auth();
-  return await leaderboards.get({
-    ruleset: session?.user?.settings?.ruleset ?? Ruleset.Osu,
+  const session = await getSession();
+  return await leaderboards
+  .get({
+    ruleset: session?.settings?.ruleset ?? Ruleset.Osu,
     bronze: params.tiers?.includes('bronze'),
     silver: params.tiers?.includes('silver'),
     gold: params.tiers?.includes('gold'),

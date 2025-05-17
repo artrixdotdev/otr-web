@@ -6,7 +6,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import React from 'react';
 import './globals.css';
 import Footer from '@/components/footer/Footer';
-import { CookiesProvider } from 'next-client-cookies/server';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,16 +35,14 @@ export default async function RootLayout({
       <body
         className={`font-sans ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <CookiesProvider>
-          <ThemeProvider attribute="class" disableTransitionOnChange>
-            <Header />
-            <main className="mx-auto w-full px-5 md:max-w-4xl xl:max-w-6xl">
-              {children}
-            </main>
-            <Footer />
-            <Toaster richColors />
-          </ThemeProvider>
-        </CookiesProvider>
+        <ThemeProvider attribute="class" disableTransitionOnChange>
+          <Header />
+          <main className="mx-auto w-full px-5 md:max-w-4xl xl:max-w-6xl">
+            {children}
+          </main>
+          <Footer />
+          <Toaster richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

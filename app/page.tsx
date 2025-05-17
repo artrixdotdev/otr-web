@@ -9,8 +9,12 @@ import RulesetIcon from '@/components/icons/RulesetIcon';
 import { Ruleset } from '@osu-tournament-rating/otr-api-client';
 import { RulesetEnumHelper } from '@/lib/enums';
 import LinkCard from '@/components/home/LinkCard';
+import { me } from '@/lib/actions/api';
 
 export default async function Page() {
+  const user = await (await me()).get();
+  console.log(user);
+
   return (
     <div className="container m-4 mx-auto flex min-h-screen flex-col gap-2 bg-background py-4 text-foreground">
       {/* Hero section */}

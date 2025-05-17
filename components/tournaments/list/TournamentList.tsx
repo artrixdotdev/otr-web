@@ -13,19 +13,9 @@ import { TournamentsListRequestParams } from '@osu-tournament-rating/otr-api-cli
 import { TournamentListFilter } from '@/lib/types';
 import TournamentCard from '../TournamentCard';
 import { Skeleton } from '@/components/ui/skeleton';
+import { tournaments } from '@/lib/api';
 
 const pageSize = 30;
-
-const tournaments = (token: string) =>
-  new TournamentsWrapper({
-    // The proxy will forward the request to the API instead of web
-    baseUrl: '',
-    clientConfiguration: {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  });
 
 const fetcher = (
   token?: string
@@ -33,10 +23,7 @@ const fetcher = (
   if (!token) {
     return () => [];
   }
-  return (params) =>
-    tournaments(token)
-      .list(params)
-      .then((res) => res.result);
+  return (params) => tournaments.list(params).then((res) => res.result);
 };
 
 const getKey = (
